@@ -22,7 +22,7 @@
 2. Создайте и активируйте виртуальное окружение:
     ```sh
     python -m venv venv
-    source venv/bin/activate  # Для Windows: venv\Scripts\activate
+    source venv/bin/activate 
     ```
 
 3. Установите зависимости:
