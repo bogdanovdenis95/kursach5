@@ -1,62 +1,84 @@
-# Проект HeadHunter Data Collector
+# HH Data Collector
 
-Этот проект предназначен для сбора данных с API HeadHunter (hh.ru) о работодателях и вакансиях, их сохранения в базу данных PostgreSQL и предоставления возможности работы с этими данными.
+Этот проект собирает данные о вакансиях с сайта hh.ru и сохраняет их в базу данных PostgreSQL. Также он предоставляет различные методы для работы с собранными данными.
 
-## Как начать использовать проект
+## Структура проекта
 
-1. **Настройка окружения**:
-   - Установите Python версии 3.x: [скачать Python](https://www.python.org/downloads/)
-   - Установите PostgreSQL: [скачать PostgreSQL](https://www.postgresql.org/download/)
-   - Создайте базу данных под названием `skypro`.
-   - Запустите PostgreSQL и убедитесь, что сервер базы данных запущен.
+- `config_example.py`: Пример конфигурационного файла с параметрами подключения к базе данных.
+- `db_settings.py`: Модуль для настройки базы данных (создание таблиц).
+- `db_manager.py`: Модуль для работы с базой данных (запросы к таблицам).
+- `hh_data_collector.py`: Модуль для получения данных с сайта hh.ru и их вставки в базу данных.
+- `main.py`: Точка входа в приложение, которая связывает все модули вместе.
+- `requirements.txt`: Файл с зависимостями проекта.
 
-2. **Установка и настройка проекта**:
-   - Клонируйте репозиторий: `git clone https://github.com/ваш_проект`
-   - Перейдите в каталог проекта: `cd ваш_проект`
-   - Установите необходимые зависимости:
-     ```bash
-     pip install -r requirements.txt
-     pip install psycopg2
-     ```
+## Установка
 
-3. **Создание таблиц в базе данных**:
-   - Запустите скрипт `db_settings.py` для создания необходимых таблиц в базе данных PostgreSQL.
-   - Внесите необходимые изменения в параметры подключения (`dbname`, `user`, `password`, `host`, `port`) в соответствии с вашими настройками PostgreSQL.
+1. Клонируйте репозиторий:
+    ```sh
+    git clone https://github.com/yourusername/hh-data-collector.git
+    cd hh-data-collector
+    ```
 
-4. **Сбор и вставка данных**:
-   - Запустите скрипт `hh_data_collector.py` для получения данных о работодателях и вакансиях с API HeadHunter.
-   - Убедитесь, что база данных PostgreSQL (`skypro`) доступна и работает.
+2. Создайте и активируйте виртуальное окружение:
+    ```sh
+    python -m venv venv
+    source venv/bin/activate  # Для Windows: venv\Scripts\activate
+    ```
 
-5. **Операции с базой данных**:
-   - Используйте `db_manager.py` для выполнения запросов к базе данных.
-   - При необходимости измените параметры подключения (`dbname`, `user`, `password`, `host`, `port`).
+3. Установите зависимости:
+    ```sh
+    pip install -r requirements.txt
+    ```
 
-## Функциональность
+4. Создайте файл `config.py`, скопировав `config_example.py`:
+    ```sh
+    cp config_example.py config.py
+    ```
 
-- **Сбор данных**: Скрипт `hh_data_collector.py` собирает данные о работодателях и вакансиях с API HeadHunter и сохраняет их в базу данных.
-- **Управление базой данных**: `db_manager.py` предоставляет методы для выполнения запросов к базе данных, таких как получение списка вакансий с высокой зарплатой или поиск по ключевому слову.
+5. Откройте `config.py` и заполните его параметрами подключения к базе данных:
+    ```python
+    DB_NAME = 'your_database_name'
+    DB_USER = 'your_database_user'
+    DB_PASSWORD = 'your_database_password'
+    DB_HOST = 'your_database_host'
+    DB_PORT = 'your_database_port'
+    ```
 
-## Примеры использования
+## Использование
 
-```python
-# Пример использования db_manager.py
-from db_manager import DBManager
+1. Запустите главный скрипт:
+    ```sh
+    python main.py
+    ```
 
-db = DBManager(dbname='skypro', user='postgres', password='skypro', host='localhost', port='5433')
+2. Скрипт выполнит следующие шаги:
+    - Создаст таблицы в базе данных.
+    - Соберет данные о работодателях и вакансиях с сайта hh.ru.
+    - Вставит собранные данные в базу данных.
+    - Выполнит несколько запросов к базе данных и выведет результаты.
 
-print("Количество компаний и вакансий:")
-print(db.get_companies_and_vacancies_count())
+## Структура базы данных
 
-print("\nВсе вакансии:")
-print(db.get_all_vacancies())
+Проект создает две таблицы: `employers` и `vacancies`.
 
-print("\nСредняя зарплата:")
-print(db.get_avg_salary())
+### Таблица `employers`
+- `id`: SERIAL PRIMARY KEY
+- `hh_id`: INT NOT NULL UNIQUE
+- `name`: VARCHAR(255) NOT NULL
+- `description`: TEXT
+- `url`: VARCHAR(255)
 
-print("\nВакансии с высокой зарплатой:")
-print(db.get_vacancies_with_higher_salary())
+### Таблица `vacancies`
+- `id`: SERIAL PRIMARY KEY
+- `hh_id`: INT NOT NULL UNIQUE
+- `employer_id`: INT REFERENCES employers(id)
+- `name`: VARCHAR(255) NOT NULL
+- `salary_from`: INT
+- `salary_to`: INT
+- `currency`: VARCHAR(10)
+- `published_at`: TIMESTAMP
+- `url`: VARCHAR(255)
 
-print("\nВакансии с ключевым словом 'Python':")
-print(db.get_vacancies_with_keyword('Python'))
+## Лицензия
 
-db.close()
+Этот проект лицензирован на условиях лицензии MIT. Подробнее см. файл [LICENSE](LICENSE).
