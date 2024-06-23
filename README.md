@@ -15,8 +15,8 @@
 
 1. Клонируйте репозиторий:
     ```sh
-    git clone https://github.com/yourusername/hh-data-collector.git
-    cd hh-data-collector
+    git clone https://github.com/bogdanovdenis95/kursach5.git
+    cd kursach5
     ```
 
 2. Создайте и активируйте виртуальное окружение:
