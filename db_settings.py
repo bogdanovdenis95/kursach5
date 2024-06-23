@@ -1,13 +1,14 @@
 import psycopg2
+from config import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
 
 class DBSetup:
-    def __init__(self, dbname, user, password, host, port):
+    def __init__(self):
         self.conn = psycopg2.connect(
-            dbname=dbname,
-            user=user,
-            password=password,
-            host=host,
-            port=port
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=DB_HOST,
+            port=DB_PORT
         )
         self.cur = self.conn.cursor()
 
@@ -48,8 +49,3 @@ class DBSetup:
     def close(self):
         self.cur.close()
         self.conn.close()
-
-if __name__ == "__main__":
-    db_setup = DBSetup(dbname='skypro', user='postgres', password='skypro', host='localhost', port='5433')
-    db_setup.create_tables()
-    db_setup.close()
