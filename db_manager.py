@@ -1,13 +1,14 @@
 import psycopg2
+from config import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
 
 class DBManager:
-    def __init__(self, dbname, user, password, host, port):
+    def __init__(self):
         self.conn = psycopg2.connect(
-            dbname=dbname,
-            user=user,
-            password=password,
-            host=host,
-            port=port
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=DB_HOST,
+            port=DB_PORT
         )
         self.cur = self.conn.cursor()
 
@@ -58,24 +59,3 @@ class DBManager:
     def close(self):
         self.cur.close()
         self.conn.close()
-
-# Пример использования
-if __name__ == "__main__":
-    db = DBManager(dbname='skypro', user='postgres', password='skypro', host='localhost', port='5433')
-    
-    print("Companies and vacancies count:")
-    print(db.get_companies_and_vacancies_count())
-
-    print("\nAll vacancies:")
-    print(db.get_all_vacancies())
-
-    print("\nAverage salary:")
-    print(db.get_avg_salary())
-
-    print("\nVacancies with higher salary:")
-    print(db.get_vacancies_with_higher_salary())
-
-    print("\nVacancies with keyword 'Python':")
-    print(db.get_vacancies_with_keyword('Python'))
-
-    db.close()
