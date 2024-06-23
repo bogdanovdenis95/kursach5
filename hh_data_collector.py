@@ -1,7 +1,6 @@
 import requests
 import psycopg2
-from psycopg2 import Error
-
+from config import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT
 
 def get_employers(employer_ids):
     employers = []
@@ -12,7 +11,6 @@ def get_employers(employer_ids):
         else:
             print(f"Failed to retrieve data for employer ID: {employer_id}")
     return employers
-
 
 def get_vacancies(employer_id):
     vacancies = []
@@ -30,15 +28,14 @@ def get_vacancies(employer_id):
             break
     return vacancies
 
-
 def insert_data(employers, vacancies):
     try:
         conn = psycopg2.connect(
-            dbname='skypro',
-            user='postgres',
-            password='skypro',
-            host='localhost',
-            port='5433'
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=DB_HOST,
+            port=DB_PORT
         )
         cur = conn.cursor()
 
@@ -75,14 +72,3 @@ def insert_data(employers, vacancies):
         if 'conn' in locals():
             cur.close()
             conn.close()
-
-
-if __name__ == "__main__":
-    employer_ids = ['1455', '78638','5713306', '2219347', '10347404', '8940297', '4599861', '5912899', '4219', '1740']  # Примеры ID компаний
-    employers = get_employers(employer_ids)
-    
-    vacancies = {}
-    for employer_id in employer_ids:
-        vacancies[employer_id] = get_vacancies(employer_id)
-    
-    insert_data(employers, vacancies)
